@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador Saber 11 - I.E. Carmen de Ariguaní</title>
+    <style>
+        :root {
+            --primary-color: #1e3a8a;
+            --secondary-color: #0284c7;
+            --accent-color: #f59e0b;
+            --bg-color: #f8fafc;
+            --text-color: #1e293b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); height: 100vh; overflow: hidden; }
+
+        /* Pantalla de Inicio / Carátula */
+        #pantalla-inicio {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%);
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .caratula-container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 { font-size: 2rem; margin-bottom: 20px; letter-spacing: 1px; color: #f8fafc; }
+        h2 { font-size: 1.2rem; margin-bottom: 30px; color: #94a3b8; font-weight: 400; }
+        
+        .escudo-box {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 25px auto;
+            background-color: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid var(--secondary-color);
+            overflow: hidden;
+        }
+        .escudo-box img { width: 100%; height: 100%; object-fit: cover; }
+
+        .autor { font-size: 0.9.rem; margin-bottom: 35px; color: #cbd5e1; font-style: italic; }
+        
+        .input-group { margin-bottom: 15px; text-align: left; }
+        .input-group label { display: block; margin-bottom: 5px; font-size: 0.9rem; color: #cbd5e1; }
+        .input-group input, .input-group select {
+            width: 100%; padding: 10px; border-radius: 5px; border: none; background: white; color: #0f172a; font-size: 1rem;
+        }
+
+        .btn-iniciar {
+            background-color: var(--accent-color);
+            color: #0f172a;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 15px;
+        }
+        .btn-iniciar:hover { background-color: #d97706; transform: translateY(-2px); }
+
+        /* Entorno del Simulador (Pantalla Dividida) */
+        #entorno-simulador { display: none; height: 100vh; flex-direction: column; }
+        
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .main-container { display: flex; flex: 1; height: calc(100vh - 50px); }
+        
+        /* Panel Izquierdo: Visualizador PDF */
+        .panel-pdf { width: 55%; height: 100%; border-right: 4px solid #cbd5e1; background-color: #525659; }
+        .panel-pdf iframe { width: 100%; height: 100%; border: none; }
+
+        /* Panel Derecho: Preguntas */
+        .panel-preguntas { width: 45%; height: 100%; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; }
+        
+        .meta-info { font-size: 0.85rem; color: var(--secondary-color); font-weight: bold; margin-bottom: 10px; text-transform: uppercase; }
+        .pregunta-texto { font-size: 1.15rem; font-weight: 600; margin-bottom: 25px; line-height: 1.5; }
+        
+        .opciones-container { display: flex; flex-direction: column; gap: 12px; margin-bottom: 30px; }
+        .opcion-btn {
+            text-align: left; padding: 15px; border: 2px solid #e2e8f0; border-radius: 8px;
+            background-color: white; cursor: pointer; font-size: 1rem; transition: all 0.2s;
+        }
+        .opcion-btn:hover { border-color: var(--secondary-color); background-color: #f0f9ff; }
+        .opcion-btn.seleccionada { border-color: var(--primary-color); background-color: #e0f2fe; font-weight: 600; }
+
+        .acciones { display: flex; justify-content: space-between; margin-top: auto; }
+        .btn-nav {
+            background-color: var(--primary-color); color: white; border: none; padding: 10px 20px;
+            border-radius: 5px; cursor: pointer; font-weight: 600;
+        }
+        .btn-nav:disabled { background-color: #cbd5e1; cursor: not-allowed; }
+
+        /* Pantalla de Resultados */
+        #pantalla-resultados {
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+            height: 100vh; padding: 20px; text-align: center; background-color: #f1f5f9;
+        }
+        .resultados-card {
+            background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            max-width: 500px; width: 100%;
+        }
+        .score { font-size: 3.5rem; font-weight: 800; color: var(--primary-color); margin: 20px 0; }
+        .estado-envio { margin-top: 15px; font-size: 0.9rem; color: #64748b; }
+    </style>
+</head>
+<body>
+
+    <div id="pantalla-inicio">
+        <div class="caratula-container">
+            <h1>INSTITUCIÓN EDUCATIVA CARMEN DE ARIGUANÍ</h1>
+            <div class="escudo-box">
+                <img src="escudo.png" alt="Escudo I.E. Carmen de Ariguaní" onerror="this.src='https://via.placeholder.com/150?text=ESCUDO';">
+            </div>
+            <h2>Simulador de Preparación Saber 11</h2>
+            <div class="autor">Desarrollador: Roberto Atencia Morales</div>
+            
+            <div class="input-group">
+                <label for="nombre">Nombre Completo del Estudiante:</label>
+                <input type="text" id="nombre" placeholder="Ej. Juan Carlos Pérez">
+            </div>
+            <div class="input-group">
+                <label for="grado">Grado / Curso:</label>
+                <select id="grado">
+                    <option value="">Seleccione...</option>
+                    <option value="11-01">11-01</option>
+                    <option value="11-02">11-02</option>
+                </select>
+            </div>
+            <button class="btn-iniciar" onclick="comenzarSimulacion()">Iniciar Simulación</button>
+        </div>
+    </div>
+
+    <div id="entorno-simulador">
+        <header>
+            <span id="institucion-header" style="font-weight: bold;">I.E. CARMEN DE ARIGUANÍ</span>
+            <span id="info-estudiante">Estudiante: --</span>
+            <span id="cronometro">Pregunta: 1/--</span>
+        </header>
+        <div class="main-container">
+            <div class="panel-pdf">
+                <iframe id="visor-pdf" src=""></iframe>
+            </div>
+            <div class="panel-preguntas">
+                <div id="meta-pregunta" class="meta-info">Área</div>
+                <div id="texto-pregunta" class="pregunta-texto">Cargando pregunta...</div>
+                <div id="opciones-bloque" class="opciones-container"></div>
+                <div class="acciones">
+                    <button id="btn-anterior" class="btn-nav" onclick="navegar(-1)" disabled>Anterior</button>
+                    <button id="btn-siguiente" class="btn-nav" onclick="navegar(1)">Siguiente</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="pantalla-resultados">
+        <div class="resultados-card">
+            <h2>Evaluación Finalizada</h2>
+            <p style="margin-top: 10px; color: #64748b;">Tu hoja de respuestas ha sido consolidada.</p>
+            <div id="porcentaje-resultado" class="score">0%</div>
+            <p id="conteo-detallado" style="font-size: 1.1rem; margin-bottom: 20px;">Correctas: 0 | Incorrectas: 0</p>
+            <p id="envio-status" class="estado-envio">Enviando reporte a la base de datos del docente...</p>
+        </div>
+    </div>
+
+    <script>
+        // CONFIGURACIÓN DE CONEXIÓN CON GOOGLE SHEETS
+        const RECEPTOR_URL = "https://script.google.com/macros/s/AKfycbyXeHCgf8vlA7Uk1QUgfaVgcqcDVJgakYJkUnUmtxcnN7_ec2vB21l9ZK5fyiVifV0J/exec";
+
+        let bancoPreguntas = [];
+        let respuestasUsuario = {};
+        let indiceActual = 0;
+        let datosEstudiante = { nombre: "", grado: "" };
+
+        // Cargar las preguntas del archivo JSON local automáticamente
+        async function cargarPreguntas() {
+            try {
+                const response = await fetch('preguntas.json');
+                bancoPreguntas = await response.json();
+            } catch (error) {
+                console.error("Error cargando preguntas.json:", error);
+                alert("Error al inicializar la base de preguntas. Asegúrate de tener preguntas.json al lado de este archivo.");
+            }
+        }
+        cargarPreguntas();
+
+        function comenzarSimulacion() {
+            const nom = document.getElementById('nombre').value.trim();
+            const gra = document.getElementById('grado').value;
+
+            if(!nom || !gra) {
+                alert("Por favor, digite su nombre completo y seleccione su grado para comenzar.");
+                return;
+            }
+
+            datosEstudiante.nombre = nom;
+            datosEstudiante.grado = gra;
+
+            document.getElementById('info-estudiante').innerText = `Estudiante: ${nom} (${gra})`;
+            document.getElementById('pantalla-inicio').style.display = 'none';
+            document.getElementById('entorno-simulador').style.display = 'flex';
+
+            renderPregunta();
+        }
+
+        function renderPregunta() {
+            if(bancoPreguntas.length === 0) return;
+            const item = bancoPreguntas[indiceActual];
+
+            // Actualizar encabezados e información de navegación
+            document.getElementById('cronometro').innerText = `Pregunta: ${indiceActual + 1} / ${bancoPreguntas.length}`;
+            document.getElementById('meta-pregunta').innerText = item.area;
+            document.getElementById('texto-pregunta').innerText = item.pregunta;
+
+            // Actualizar visor de PDF dinámicamente apuntando al archivo y página exacta
+            document.getElementById('visor-pdf').src = item.pdf_fuente;
+
+            // Renderizar botones de opción múltiple A, B, C, D
+            const contenedorOp = document.getElementById('opciones-bloque');
+            contenedorOp.innerHTML = "";
+
+            Object.keys(item.opciones).forEach(letra => {
+                const btn = document.createElement('button');
+                btn.className = 'opcion-btn';
+                if(respuestasUsuario[indiceActual] === letra) btn.classList.add('seleccionada');
+                btn.innerText = item.opciones[letra];
+                btn.onclick = () => seleccionarOpcion(letra);
+                contenedorOp.appendChild(btn);
+            });
+
+            // Manejo de botones de navegación
+            document.getElementById('btn-anterior').disabled = (indiceActual === 0);
+            if(indiceActual === bancoPreguntas.length - 1) {
+                document.getElementById('btn-siguiente').innerText = "Finalizar Prueba";
+                document.getElementById('btn-siguiente').style.backgroundColor = "#10b981";
+            } else {
+                document.getElementById('btn-siguiente').innerText = "Siguiente";
+                document.getElementById('btn-siguiente').style.backgroundColor = "var(--primary-color)";
+            }
+        }
+
+        function seleccionarOpcion(letra) {
+            respuestasUsuario[indiceActual] = letra;
+            const botones = document.querySelectorAll('.opcion-btn');
+            botones.forEach(b => b.classList.remove('seleccionada'));
+            
+            // Remarcar el botón seleccionado visualmente
+            event.target.classList.add('seleccionada');
+        }
+
+        function navegar(direccion) {
+            if(direccion === 1 && indiceActual === bancoPreguntas.length - 1) {
+                evaluarYEnviar();
+                return;
+            }
+            indiceActual += direccion;
+            renderPregunta();
+        }
+
+        function evaluarYEnviar() {
+            if(Object.keys(respuestasUsuario).length < bancoPreguntas.length) {
+                if(!confirm("Aún tienes preguntas sin responder. ¿Estás seguro de que deseas finalizar la prueba?")) {
+                    return;
+                }
+            }
+
+            document.getElementById('entorno-simulador').style.display = 'none';
+            document.getElementById('pantalla-resultados').style.display = 'flex';
+
+            let correctas = 0;
+            let incorrectas = 0;
+
+            bancoPreguntas.forEach((p, i) => {
+                if(respuestasUsuario[i] === p.respuesta_correcta) {
+                    correctas++;
+                } else {
+                    incorrectas++;
+                }
+            });
+
+            const porcentaje = Math.round((correctas / bancoPreguntas.length) * 100);
+
+            // Pintar resultados en pantalla
+            document.getElementById('porcentaje-resultado').innerText = porcentaje + "%";
+            document.getElementById('conteo-detallado').innerText = `Correctas: ${correctas} | Incorrectas: ${incorrectas}`;
+
+            // Determinar áreas evaluadas de forma resumida
+            let areasSet = new Set(bancoPreguntas.map(p => p.area));
+            let areasTexto = Array.from(areasSet).join(", ");
+
+            // Construir el paquete de datos para enviar a Google Sheets
+            const paqueteNotas = {
+                nombre: datosEstudiante.nombre,
+                grado: datosEstudiante.grado,
+                area: areasTexto,
+                correctas: correctas,
+                incorrectas: incorrectas,
+                puntaje: porcentaje
+            };
+
+            // Enviar petición HTTP POST asíncrona al puente receptor de Google
+            fetch(RECEPTOR_URL, {
+                method: "POST",
+                mode: "no-cors",
+                cache: "no-cache",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(paqueteNotas)
+            }).then(() => {
+                document.getElementById('envio-status').innerText = "✅ ¡Reporte enviado con éxito! Los resultados ya están en el registro del docente.";
+                document.getElementById('envio-status').style.color = "#10b981";
+            }).catch(err => {
+                document.getElementById('envio-status').innerText = "⚠️ Error de red al enviar. Por favor, tómale una captura a esta pantalla y muéstrasela a tu profesor.";
+                document.getElementById('envio-status').style.color = "#ef4444";
+                console.error(err);
+            });
+        }
+    </script>
+</body>
+</html>

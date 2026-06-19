@@ -1,0 +1,67 @@
+[
+  {
+    "id": 1,
+    "area": "Sociales y Ciudadanas",
+    "pdf_fuente": "sociales.pdf#page=4",
+    "pregunta": "Con base en la pregunta 1 del cuadernillo de Sociales (pág. 4), ¿cuál afirmación sobre la relación entre las opiniones presentadas NO es correcta?",
+    "opciones": {
+      "A": "A) Son similares, porque ambas van en contra del consumo de carne.",
+      "B": "B) Son complementarias, porque ambas promueven el vegetarianismo...",
+      "C": "C) Son diferentes, porque la primera aboga por la salud humana y la segunda por los animales.",
+      "D": "D) Son disímiles, porque la primera se centra en cómo el animal afecta al humano y la segunda al revés."
+    },
+    "respuesta_correcta": "B"
+  },
+  {
+    "id": 2,
+    "area": "Matemáticas",
+    "pdf_fuente": "matematicas.pdf#page=3",
+    "pregunta": "Con base en la situación del canal de riego de la pregunta 1 de Matemáticas (pág. 3), ¿cuál es la respuesta correcta?",
+    "opciones": {
+      "A": "A) Con el canal de ancho x/2 y profundidad 2y se duplica el flujo de agua.",
+      "B": "B) Con el canal de ancho 2x y profundidad y/2 se mantiene el flujo de agua.",
+      "C": "C) Con el canal de ancho 4x y profundidad y/4 se duplica el flujo de agua.",
+      "D": "D) Con el canal de ancho x/4 y profundidad 4y se mantiene el flujo de agua."
+    },
+    "respuesta_correcta": "C"
+  },
+  {
+    "id": 3,
+    "area": "Ciencias Naturales",
+    "pdf_fuente": "naturales.pdf#page=3",
+    "pregunta": "De acuerdo con la cartelera informativa sobre la densidad de los líquidos de la pregunta 1 de Ciencias Naturales (pág. 3), ¿cuál es la conclusión válida?",
+    "opciones": {
+      "A": "A) El líquido 1 es el de mayor densidad.",
+      "B": "B) El líquido 2 es el de mayor densidad.",
+      "C": "C) El líquido 3 es el de mayor densidad.",
+      "D": "D) El líquido 4 es el de mayor densidad."
+    },
+    "respuesta_correcta": "C"
+  },
+  {
+    "id": 4,
+    "area": "Lectura Crítica",
+    "pdf_fuente": "lectura.pdf#page=3",
+    "pregunta": "A partir del texto 'El Estado y la sociedad' que se encuentra en la página 3 de Lectura Crítica, responda la pregunta 1: ¿Cuál es la tesis central del autor?",
+    "opciones": {
+      "A": "A) La sociedad civil es superior al orden estatal.",
+      "B": "B) El Estado democrático debe regular la moral privada.",
+      "C": "C) Las instituciones son el reflejo de los contratos sociales.",
+      "D": "D) El poder político emana del monopolio legítimo de la fuerza."
+    },
+    "respuesta_correcta": "C"
+  },
+  {
+    "id": 5,
+    "area": "Inglés",
+    "pdf_fuente": "ingles.pdf#page=3",
+    "pregunta": "Look at the notice on page 3 of the English booklet (Part 1, Question 1). Where can you see this notice?",
+    "opciones": {
+      "A": "A) In a school",
+      "B": "B) In a clothes shop",
+      "C": "C) In a railway station",
+      "D": "D) In a hospital"
+    },
+    "respuesta_correcta": "B"
+  }
+]
